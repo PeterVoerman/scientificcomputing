@@ -1,3 +1,11 @@
+# Scientific computing Exercise 1.2
+# Peter Voerman and Nik brouw
+
+# The results of one of the simulations are stored in "1.2.pkl"
+# Change the variable below to True in order to run the entire simulation again
+
+run_again = False
+
 import numpy as np
 import matplotlib.pyplot as plt
 import pickle
@@ -50,6 +58,8 @@ def calculate_diffusion():
     with open(output, 'wb') as fp:
         pickle.dump(grid_list, fp)
 
+    return grid_list
+
 def analytical_solution(t, D = 1):
     solution_list = []
 
@@ -63,11 +73,13 @@ def analytical_solution(t, D = 1):
 
     return solution_list
 
+if not run_again:
+    with open(output, 'rb') as fp:
+        grid_list = pickle.load(fp)
+else:
+    grid_list = calculate_diffusion()
 
-with open(output, 'rb') as fp:
-    grid_list = pickle.load(fp)
-
-times = [1, 50, 100, 150, 200, 500, 1000]
+times = [1, 50, 150, 500, 1000]
 
 for time in times:
     analytical = analytical_solution(time / 1000)
@@ -76,16 +88,17 @@ for time in times:
     for row in grid_list[time]:
         experimental.insert(0, row[50])
 
-    plt.plot(range(0, 105, 5), analytical, label="analytical")
-    plt.plot(range(0, 100), experimental, label="experimental")
-    plt.legend()
-    plt.show()
+    plt.plot(range(0, 105, 5), analytical, label=f"Analytical, t={time}")
+    plt.plot(range(0, 100), experimental, label=f"Experimental, t={time}")
+plt.title("Simulation compared to analytical solution of the diffusion equation")
+plt.legend()
+plt.show()
 
-times = [1, 10, 100, 1000]
+times = [0, 1, 10, 100, 1000]
 
 for time in times:
     plt.imshow(grid_list[time])
-    plt.title(f"t={time}")
+    plt.title(f"t={time/1000}")
     plt.show()
 
 for grid in grid_list:
