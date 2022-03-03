@@ -1,5 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
+import matplotlib.colors as colors
 import math
 
 N = 100
@@ -55,10 +56,11 @@ grid[0] = 1
 
 cluster = [[50, N-1]]
 
-for t in range(100):
+
+for t in range(250):
     print(t)
 
-    grid = SOR(1.7, grid, cluster)
+    grid = SOR(1.8, grid, cluster)
 
     candidates = []
 
@@ -92,8 +94,16 @@ for t in range(100):
     
     cluster.append(candidates[new_point])
 
-plt.imshow(grid, cmap='nipy_spectral')
+
+for y in range(N):
+    for x in range(N):
+        if grid[y][x] == 0:
+            grid[y][x] = None
+
+plt.imshow(grid, cmap='gist_rainbow', norm=colors.LogNorm())
 plt.show()
+
+
 
 cluster_grid = np.zeros((N,N))
 for point in cluster:
