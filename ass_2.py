@@ -8,7 +8,7 @@ delta_x = 1 / N
 D = 1
 epsilon = 1e-3
 
-eta = 1
+eta = 2
 
 def SOR(omega, grid, cluster):
     delta = np.inf
@@ -26,7 +26,7 @@ def SOR(omega, grid, cluster):
         new_grid[0] = 1
 
         for point in cluster:
-            new_grid[point[1]][point[0]] = 1
+            new_grid[point[1]][point[0]] = 0
 
         for y in range(1, N - 1):
             if [0, y] not in cluster:
@@ -53,7 +53,7 @@ grid = np.zeros((N,N))
 
 grid[0] = 1
 
-cluster = [[50, 0]]
+cluster = [[50, N-1]]
 
 for t in range(100):
     print(t)
@@ -92,7 +92,7 @@ for t in range(100):
     
     cluster.append(candidates[new_point])
 
-plt.imshow(grid, cmap='rainbow')
+plt.imshow(grid, cmap='nipy_spectral')
 plt.show()
 
 cluster_grid = np.zeros((N,N))
