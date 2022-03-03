@@ -1,25 +1,53 @@
+import numpy as np
+import matplotlib.pyplot as plt
+import random
+
 N = 100
 
 grid = np.zeros((N,N))
 
 cluster = [[50, N-1]]
 
-while len(cluster) < 100:
-	while True:
-		location_x = np.random.randint(0, 100)
-		location_y = 0
-		new_location_y = location_y
-		new_location_x = location_x
+sticking_probability = 0.25
+
+while len(cluster) < 1000:
+	found = False
+
+	x = np.random.randint(0, 100)
+	y = 0
+
+	while not found:
+		
+		
+
 
 		direction = np.random.choice(["e", "n", "w", "s"])
 
-		if direction == "e":
-			new_location_x += 1
-		if direction == "w":
-			new_location_x -= 1
-		if direction == "n":
-			new_location_y += 1
-		if direction == "s":
-			new_location_y -= 1
+		if direction == "e" and [x+1,y] not in cluster:
+			x += 1
+		if direction == "w" and [x-1,y] not in cluster:
+			x -= 1
+		if direction == "n" and [x,y+1] not in cluster:
+			y += 1
+		if direction == "s" and [x,y-1] not in cluster:
+			y -= 1
+
+		x %= 100
+
+		if y >= 100 or y < 0:
+			found = True
+			continue
+
+		if [x + 1, y] in cluster or [x - 1, y] in cluster or [x, y + 1] in cluster or [x, y - 1] in cluster:
+			if random.random() < sticking_probability:
+				cluster.append([x, y]) 
+				print(len(cluster))
+				found = True
+
+for point in cluster:
+	grid[point[1]][point[0]] = 1
+
+plt.imshow(grid)
+plt.show()
 
 		

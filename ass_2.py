@@ -100,7 +100,7 @@ for y in range(N):
         if grid[y][x] == 0:
             grid[y][x] = None
 
-plt.imshow(grid, cmap='gist_rainbow', norm=colors.LogNorm())
+plt.imshow(grid, cmap='gist_rainbow')
 plt.show()
 
 
