@@ -15,7 +15,8 @@ import random
 N = 100
 t_end = 500
 
-D = 0.08
+Du = 0.16
+Dv = 0.08
 delta_t = 1
 delta_x = 1
 
@@ -48,22 +49,22 @@ def calculate_diffusion():
 
         for y in range(1, N - 1):
             for x in range(1, N - 1):
-                new_u_grid[y][x] = delta_t * (D * ((u_grid[y][x+1]+u_grid[y][x-1]+u_grid[y+1][x]+u_grid[y-1][x]-4*u_grid[y][x])/delta_x**2)-u_grid[y][x]*v_grid[y][x]**2+f*(1-u_grid[y][x]))+u_grid[y][x]
-                new_v_grid[y][x] = delta_t * (D * ((v_grid[y][x+1]+v_grid[y][x-1]+v_grid[y+1][x]+v_grid[y-1][x]-4*v_grid[y][x])/delta_x**2)+u_grid[y][x]*v_grid[y][x]**2-(f+k)*v_grid[y][x])+v_grid[y][x]
+                new_u_grid[y][x] = delta_t * (Du * ((u_grid[y][x+1]+u_grid[y][x-1]+u_grid[y+1][x]+u_grid[y-1][x]-4*u_grid[y][x])/delta_x**2)-u_grid[y][x]*v_grid[y][x]**2+f*(1-u_grid[y][x]))+u_grid[y][x]
+                new_v_grid[y][x] = delta_t * (Dv * ((v_grid[y][x+1]+v_grid[y][x-1]+v_grid[y+1][x]+v_grid[y-1][x]-4*v_grid[y][x])/delta_x**2)+u_grid[y][x]*v_grid[y][x]**2-(f+k)*v_grid[y][x])+v_grid[y][x]
 
         for x in range(1, N - 1):
-            new_u_grid[0][x] = delta_t * (D*((u_grid[0][x+1]+u_grid[0][x-1]+u_grid[1][x]-4*u_grid[0][x])/delta_x**2)-u_grid[0][x]*v_grid[0][x]**2+f*(1-u_grid[0][x]))+u_grid[0][x]
-            new_v_grid[0][x] = delta_t * (D*((v_grid[0][x+1]+v_grid[0][x-1]+v_grid[1][x]-4*v_grid[0][x])/delta_x**2)+u_grid[0][x]*v_grid[0][x]**2-(f+k)*v_grid[0][x])+v_grid[0][x]
+            new_u_grid[0][x] = delta_t * (Du*((u_grid[0][x+1]+u_grid[0][x-1]+u_grid[1][x]-4*u_grid[0][x])/delta_x**2)-u_grid[0][x]*v_grid[0][x]**2+f*(1-u_grid[0][x]))+u_grid[0][x]
+            new_v_grid[0][x] = delta_t * (Dv*((v_grid[0][x+1]+v_grid[0][x-1]+v_grid[1][x]-4*v_grid[0][x])/delta_x**2)+u_grid[0][x]*v_grid[0][x]**2-(f+k)*v_grid[0][x])+v_grid[0][x]
 
-            new_u_grid[-1][x] = delta_t * (D*((u_grid[-1][x+1]+u_grid[-1][x-1]+u_grid[-2][x]-4*u_grid[-1][x])/delta_x**2)-u_grid[-1][x]*v_grid[-1][x]**2+f*(1-u_grid[-1][x]))+u_grid[-1][x]
-            new_v_grid[-1][x] = delta_t * (D*((v_grid[-1][x+1]+v_grid[-1][x-1]+v_grid[-2][x]-4*v_grid[-1][x])/delta_x**2)+u_grid[-1][x]*v_grid[-1][x]**2-(f+k)*v_grid[-1][x])+v_grid[-1][x]
+            new_u_grid[-1][x] = delta_t * (Du*((u_grid[-1][x+1]+u_grid[-1][x-1]+u_grid[-2][x]-4*u_grid[-1][x])/delta_x**2)-u_grid[-1][x]*v_grid[-1][x]**2+f*(1-u_grid[-1][x]))+u_grid[-1][x]
+            new_v_grid[-1][x] = delta_t * (Dv*((v_grid[-1][x+1]+v_grid[-1][x-1]+v_grid[-2][x]-4*v_grid[-1][x])/delta_x**2)+u_grid[-1][x]*v_grid[-1][x]**2-(f+k)*v_grid[-1][x])+v_grid[-1][x]
 
         for y in range(1, N - 1):
-            new_u_grid[y][0] = delta_t * (D*((u_grid[y][1]+u_grid[y+1][0]+u_grid[y-1][0]-4*u_grid[y][0])/delta_x**2)-u_grid[y][0]*v_grid[y][0]**2+f*(1-u_grid[y][0]))+u_grid[y][0]
-            new_v_grid[y][0] = delta_t * (D*((v_grid[y][1]+v_grid[y+1][0]+v_grid[y-1][0]-4*v_grid[y][0])/delta_x**2)+u_grid[y][0]*v_grid[y][0]**2-(f+k)*v_grid[y][0])+v_grid[y][0]
+            new_u_grid[y][0] = delta_t * (Du*((u_grid[y][1]+u_grid[y+1][0]+u_grid[y-1][0]-4*u_grid[y][0])/delta_x**2)-u_grid[y][0]*v_grid[y][0]**2+f*(1-u_grid[y][0]))+u_grid[y][0]
+            new_v_grid[y][0] = delta_t * (Dv*((v_grid[y][1]+v_grid[y+1][0]+v_grid[y-1][0]-4*v_grid[y][0])/delta_x**2)+u_grid[y][0]*v_grid[y][0]**2-(f+k)*v_grid[y][0])+v_grid[y][0]
    
-            new_u_grid[y][-1] = delta_t * (D*((u_grid[y][-2]+u_grid[y+1][-1]+u_grid[y-1][-1]-4*u_grid[y][-1])/delta_x**2)-u_grid[y][-1]*v_grid[y][-1]**2+f*(1-u_grid[y][-1]))+u_grid[y][-1]
-            new_v_grid[y][-1] = delta_t * (D*((v_grid[y][-2]+v_grid[y+1][-1]+v_grid[y-1][-1]-4*v_grid[y][-1])/delta_x**2)+u_grid[y][-1]*v_grid[y][-1]**2-(f+k)*v_grid[y][-1])+v_grid[y][-1]
+            new_u_grid[y][-1] = delta_t * (Du*((u_grid[y][-2]+u_grid[y+1][-1]+u_grid[y-1][-1]-4*u_grid[y][-1])/delta_x**2)-u_grid[y][-1]*v_grid[y][-1]**2+f*(1-u_grid[y][-1]))+u_grid[y][-1]
+            new_v_grid[y][-1] = delta_t * (Dv*((v_grid[y][-2]+v_grid[y+1][-1]+v_grid[y-1][-1]-4*v_grid[y][-1])/delta_x**2)+u_grid[y][-1]*v_grid[y][-1]**2-(f+k)*v_grid[y][-1])+v_grid[y][-1]
         
         
         for y in range(0, N):
