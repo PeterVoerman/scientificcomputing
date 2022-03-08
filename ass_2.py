@@ -1,7 +1,8 @@
+# Scientific computing Exercise 2A
+# Peter Voerman and Nik brouw
+
 import numpy as np
 import matplotlib.pyplot as plt
-import matplotlib.colors as colors
-import math
 
 N = 100
 delta_x = 1 / N
@@ -9,7 +10,7 @@ delta_x = 1 / N
 D = 1
 epsilon = 1e-3
 
-eta = 2
+eta = 1
 
 def SOR(omega, grid, cluster):
     delta = np.inf
@@ -48,6 +49,8 @@ def SOR(omega, grid, cluster):
 
         grid = new_grid
 
+        grid[grid<0] = 0
+
     return grid
 
 grid = np.zeros((N,N))
@@ -57,7 +60,7 @@ grid[0] = 1
 cluster = [[50, N-1]]
 
 
-for t in range(250):
+for t in range(750):
     print(t)
 
     grid = SOR(1.8, grid, cluster)
@@ -100,9 +103,9 @@ for y in range(N):
         if grid[y][x] == 0:
             grid[y][x] = None
 
+plt.title("A simulation of diffusion-limited aggregation")
 plt.imshow(grid, cmap='gist_rainbow')
 plt.show()
-
 
 
 cluster_grid = np.zeros((N,N))

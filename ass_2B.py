@@ -1,3 +1,6 @@
+# Scientific computing Exercise 2B&C
+# Peter Voerman and Nik brouw
+
 import numpy as np
 import matplotlib.pyplot as plt
 import random
@@ -8,19 +11,15 @@ grid = np.zeros((N,N))
 
 cluster = [[50, N-1]]
 
-sticking_probability = 0.25
+sticking_probability = 1
 
-while len(cluster) < 1000:
+while len(cluster) < 750:
 	found = False
 
 	x = np.random.randint(0, 100)
 	y = 0
 
 	while not found:
-		
-		
-
-
 		direction = np.random.choice(["e", "n", "w", "s"])
 
 		if direction == "e" and [x+1,y] not in cluster:
@@ -47,6 +46,7 @@ while len(cluster) < 1000:
 for point in cluster:
 	grid[point[1]][point[0]] = 1
 
+plt.title("A DLA cluster generated using the Monte Carlo method")
 plt.imshow(grid)
 plt.show()
 
