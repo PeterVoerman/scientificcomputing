@@ -11,7 +11,7 @@ grid = np.zeros((N,N))
 
 cluster = [[50, N-1]]
 
-sticking_probability = 1
+sticking_probability = 0.1
 
 while len(cluster) < 750:
 	found = False

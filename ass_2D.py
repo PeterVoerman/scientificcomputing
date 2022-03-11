@@ -32,7 +32,7 @@ def calculate_diffusion():
     u_grid = [[0.5 for i in range(N)] for i in range(N)]
     v_grid = np.zeros((N, N))
 
-    for x in range(0, 10):
+    for x in range(45, 55):
         for y in range(45, 55):
             v_grid[y][x] = 0.25
 
@@ -119,10 +119,24 @@ else:
 
 times = [0, 10, 100, 500, 1000, 2500, 4999]
 
+
+plt.rcParams.update({'font.size': 25})
 for time in times:
     plt.imshow(u_grid_list[time])
-    plt.title(f"t={time/1000}")
-    plt.show()
+    plt.tick_params(
+    axis='x',          # changes apply to the x-axis
+    which='both',      # both major and minor ticks are affected
+    bottom=False,      # ticks along the bottom edge are off
+    top=False,         # ticks along the top edge are off
+    labelbottom=False) # labels along the bottom edge are off
+    plt.tick_params(
+    axis='y',          # changes apply to the x-axis
+    which='both',      # both major and minor ticks are affected
+    right=False,      # ticks along the bottom edge are off
+    left=False,         # ticks along the top edge are off
+    labelleft=False) # labels along the bottom edge are off
+    plt.title(f"Concentration of U, t={time}")
+    plt.savefig(f"plots_2/{filename}u{time}.png")
 
 counter = 0
 for grid in u_grid_list:
@@ -135,14 +149,26 @@ for grid in u_grid_list:
 
 for time in times:
     plt.imshow(v_grid_list[time])
-    plt.title(f"t={time/1000}")
-    plt.show()
+    plt.tick_params(
+    axis='x',          # changes apply to the x-axis
+    which='both',      # both major and minor ticks are affected
+    bottom=False,      # ticks along the bottom edge are off
+    top=False,         # ticks along the top edge are off
+    labelbottom=False) # labels along the bottom edge are off
+    plt.tick_params(
+    axis='y',          # changes apply to the x-axis
+    which='both',      # both major and minor ticks are affected
+    right=False,      # ticks along the bottom edge are off
+    left=False,         # ticks along the top edge are off
+    labelleft=False) # labels along the bottom edge are off
+    plt.title(f"Concentration of V, t={time}")
+    plt.savefig(f"plots_2/{filename}v{time}.png")
 
-counter = 0
-for grid in v_grid_list:
-    if counter % 25 == 0:
-        plt.imshow(grid)
-        plt.draw()
-        plt.pause(0.001)
-        plt.clf()
-    counter += 1
+# counter = 0
+# for grid in v_grid_list:
+#     if counter % 25 == 0:
+#         plt.imshow(grid)
+#         plt.draw()
+#         plt.pause(0.001)
+#         plt.clf()
+#     counter += 1
