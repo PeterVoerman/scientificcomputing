@@ -5,65 +5,59 @@ from scipy.sparse.linalg import eigs
 
 import matplotlib.pyplot as plt
 
-def wave_solver(grid, x_length, y_length, filename, sparce=True):
+def wave_solver(grid, x_length, y_length, filename, sparce=True, circle_list=[]):
     n_elements = x_length * y_length
     matrix = np.zeros((n_elements, n_elements))
 
     for y in range(0, y_length):
         for x in range(0, x_length):
             element = grid[y][x]
-            if y > 0 and grid[y-1][x] != 0:
+            if y > 0:
                 matrix[grid[y-1][x]][element] = 1
-                matrix[element][element] -= 1
-            if y < y_length - 1 and grid[y+1][x] != 0:
+                matrix[element][element] -=1
+            if y < y_length - 1 :
                 matrix[grid[y+1][x]][element] = 1
-                matrix[element][element] -= 1
-            if x > 0 and grid[y][x-1] != 0:
+                matrix[element][element] -=1
+            if x > 0:
                 matrix[grid[y][x-1]][element] = 1
-                matrix[element][element] -= 1
-            if x < x_length - 1 and grid[y][x+1] != 0:
+                matrix[element][element] -=1
+            if x < x_length - 1:
                 matrix[grid[y][x+1]][element] = 1
-                matrix[element][element] -= 1
+                matrix[element][element] -=1
+
+            matrix[element][element] = -4
+
+
+    for y in range(y_length):
+        for x in range(x_length):
+            element = grid[y][x]
+            if circle_list != [] and element not in circle_list:
+                matrix[element] = 0
 
     print(matrix)
+
     if sparce:
         solution = eigs(matrix)
     else:
         solution = linalg.eig(matrix)
 
-
-    for L in range(len(solution[1][0])):
+    for L in range(min(10, len(solution[1][0]))):
 
         solution_grid = np.zeros((y_length, x_length))
 
         for y in range(y_length):
             for x in range(x_length):
-                solution_grid[y][x] = abs(solution[1][y * y_length + x][L])
+                solution_grid[y][x] = abs(solution[1][y * x_length + x][L])
 
-        plt.title(f"L={solution[0][L]}")
+        plt.title(f"f={solution[0][L]}")
         plt.imshow(solution_grid)
         plt.savefig(f"plots_3/{filename}{L+1}")
 
 
-x_length = 100
-y_length = 100
+x_length = 50
+y_length = 50
 
 grid = np.zeros((y_length, x_length), dtype=int)
-
-counter = 0
-for y in range(y_length):
-    for x in range(x_length):
-        grid[y][x] = int(counter)
-        counter += 1
-
-#wave_solver(grid, x_length, y_length, "square")
-
-x_length = 4
-y_length = 3
-
-grid = np.zeros((y_length, x_length), dtype=int)
-
-
 
 counter = 0
 for y in range(y_length):
@@ -73,7 +67,22 @@ for y in range(y_length):
 
 print(grid)
 
-wave_solver(grid, x_length, y_length, "rectangle")
+#wave_solver(grid, x_length, y_length, "square")
+
+x_length = 100
+y_length = 50
+
+grid = np.zeros((y_length, x_length), dtype=int)
+
+counter = 0
+for y in range(y_length):
+    for x in range(x_length):
+        grid[y][x] = int(counter)
+        counter += 1
+
+print(grid)
+
+#wave_solver(grid, x_length, y_length, "rectangle")
 
 array = np.zeros((50, 50))
 
@@ -98,10 +107,14 @@ y_length = 100
 grid = np.zeros((y_length, x_length), dtype=int)
 
 counter = 0
+circle_list = []
+
 for y in range(y_length):
     for x in range(x_length):
         if mask[y][x]:
-            grid[y][x] = int(counter)
-            counter += 1
+            circle_list.append(counter)
+        grid[y][x] = counter
+        counter += 1
+        
 
-#wave_solver(grid, x_length, y_length, "circle")
+wave_solver(grid, x_length, y_length, "circle", circle_list=circle_list)
