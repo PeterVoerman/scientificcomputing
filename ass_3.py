@@ -1,11 +1,14 @@
-import wave
 import numpy as np
 from scipy import linalg
 from scipy.sparse.linalg import eigs
 
 import matplotlib.pyplot as plt
+import matplotlib.animation as animation
 
-def wave_solver(grid, x_length, y_length, filename, sparce=True, circle_list=[]):
+from matplotlib import colors
+
+
+def wave_solver(grid, x_length, y_length, filename, sparce=True, circle_list=[], freqs=False):
     n_elements = x_length * y_length
     matrix = np.zeros((n_elements, n_elements))
 
@@ -41,17 +44,22 @@ def wave_solver(grid, x_length, y_length, filename, sparce=True, circle_list=[])
     else:
         solution = linalg.eig(matrix)
 
-    for L in range(min(10, len(solution[1][0]))):
+    if not freqs:
+        for L in range(min(10, len(solution[1][0]))):
 
-        solution_grid = np.zeros((y_length, x_length))
+            solution_grid = np.zeros((y_length, x_length))
 
-        for y in range(y_length):
-            for x in range(x_length):
-                solution_grid[y][x] = abs(solution[1][y * x_length + x][L])
+            for y in range(y_length):
+                for x in range(x_length):
+                    solution_grid[y][x] = abs(solution[1][y * x_length + x][L])
 
-        plt.title(f"f={solution[0][L]}")
-        plt.imshow(solution_grid)
-        plt.savefig(f"plots_3/{filename}{L+1}")
+            plt.title(f"f={solution[0][L]}")
+            plt.imshow(solution_grid)
+            plt.savefig(f"plots_3/{filename}{L+1}")
+
+        return solution
+    else:
+        return solution[0]
 
 
 x_length = 50
@@ -117,4 +125,71 @@ for y in range(y_length):
         counter += 1
         
 
-wave_solver(grid, x_length, y_length, "circle", circle_list=circle_list)
+solution = wave_solver(grid, x_length, y_length, "circle", circle_list=circle_list)
+
+
+# for length in [25, 50, 75, 100, 125, 150, 175, 200]:
+#     grid = np.zeros((length, length), dtype=int)
+
+#     counter = 0
+#     for y in range(length):
+#         for x in range(length):
+#             grid[y][x] = int(counter)
+#             counter += 1
+
+#     print(grid)
+
+#     freqs = wave_solver(grid, length, length, "square", freqs=True)
+
+#     plt.scatter([length for i in range(len(freqs))], freqs)
+
+# plt.show()
+
+freq = abs((solution[0][5]))
+print(freq)
+vector = abs(solution[1][:,5])
+
+
+# for t in np.arange(0, 10, 0.1):
+#     u = vector * 100*(np.cos((freq)**0.5* t) + 0.1*np.sin(freq ** 0.5 * t))
+#     print(max(u), min(u))
+#     solution_grid = np.zeros((y_length, x_length))
+
+#     for y in range(y_length):
+#         for x in range(x_length):
+#             solution_grid[y][x] = (u[y * x_length + x])
+
+#     plt.imshow(solution_grid)
+#     plt.draw()
+#     plt.pause(0.001)
+#     plt.clf()
+
+# plt.show()
+
+fig = plt.figure()
+
+t = 0
+u = vector * (np.cos((freq)**0.5* t) + np.sin(freq ** 0.5 * t))
+
+divnorm=colors.TwoSlopeNorm(vmin=-max(vector), vcenter=0., vmax=max(vector))
+
+def f(u):
+    solution_grid = np.zeros((y_length, x_length))
+
+    for y in range(y_length):
+        for x in range(x_length):
+            solution_grid[y][x] = (u[y * x_length + x])
+    return solution_grid
+
+im = plt.imshow(f(u), animated=True, norm=divnorm)
+
+
+def updatefig(*args):
+    global u, t
+    t += 0.05
+    u = vector * (np.cos((freq)**0.5* t) + np.sin(freq ** 0.5 * t))
+    im.set_array(f(u))
+    return im,
+
+ani = animation.FuncAnimation(fig, updatefig, interval=50, blit=True)
+plt.show()
