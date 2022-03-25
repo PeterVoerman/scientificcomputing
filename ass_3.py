@@ -7,6 +7,8 @@ import matplotlib.animation as animation
 
 from matplotlib import colors
 
+import time
+
 
 def wave_solver(grid, x_length, y_length, filename, sparce=True, circle_list=[], freqs=False):
     n_elements = x_length * y_length
@@ -30,14 +32,12 @@ def wave_solver(grid, x_length, y_length, filename, sparce=True, circle_list=[],
 
             matrix[element][element] = -4
 
-
-    for y in range(y_length):
-        for x in range(x_length):
-            element = grid[y][x]
-            if circle_list != [] and element not in circle_list:
-                matrix[element] = 0
-
-    print(matrix)
+    if circle_list != []:
+        for y in range(y_length):
+            for x in range(x_length):
+                element = grid[y][x]
+                if element not in circle_list:
+                    matrix[element] = 0
 
     if sparce:
         solution = eigs(matrix)
@@ -61,9 +61,9 @@ def wave_solver(grid, x_length, y_length, filename, sparce=True, circle_list=[],
     else:
         return solution[0]
 
-
-x_length = 50
-y_length = 50
+# Calculate the time difference between sparce and non-sparce matrices
+x_length = 60
+y_length = 60
 
 grid = np.zeros((y_length, x_length), dtype=int)
 
@@ -73,12 +73,22 @@ for y in range(y_length):
         grid[y][x] = int(counter)
         counter += 1
 
-print(grid)
 
-#wave_solver(grid, x_length, y_length, "square")
+start = time.time()
+wave_solver(grid, x_length, y_length, "square", sparce=False, freqs=True)
+end = time.time()
 
+print(f"The calculation took {end-start} seconds without a sparce matrix")
+
+start = time.time()
+wave_solver(grid, x_length, y_length, "square", sparce=True, freqs=True)
+end = time.time()
+
+print(f"The calculation took {end-start} seconds with a sparce matrix")
+
+# Save the images
 x_length = 100
-y_length = 50
+y_length = 100
 
 grid = np.zeros((y_length, x_length), dtype=int)
 
@@ -88,26 +98,37 @@ for y in range(y_length):
         grid[y][x] = int(counter)
         counter += 1
 
-print(grid)
+wave_solver(grid, x_length, y_length, "square")
 
-#wave_solver(grid, x_length, y_length, "rectangle")
+x_length = 130
+y_length = 65
 
-array = np.zeros((50, 50))
+grid = np.zeros((y_length, x_length), dtype=int)
 
-def create_circular_mask(h, w, center=None, radius=None):
+counter = 0
+for y in range(y_length):
+    for x in range(x_length):
+        grid[y][x] = int(counter)
+        counter += 1
 
-    if center is None: # use the middle of the image
-        center = (int(w/2), int(h/2))
-    if radius is None: # use the smallest distance between the center and image walls
-        radius = min(center[0], center[1], w-center[0], h-center[1])
 
-    Y, X = np.ogrid[:h, :w]
-    dist_from_center = np.sqrt((X - center[0])**2 + (Y-center[1])**2)
+wave_solver(grid, x_length, y_length, "rectangle")
 
-    mask = dist_from_center <= radius
+def create_circular_mask(diameter):
+
+    center = int(diameter/2)
+    radius = center
+
+    mask = [[False for i in range(diameter)] for i in range(diameter)]
+    
+    for y in range(diameter):
+        for x in range(diameter):
+            if np.sqrt((x-center) ** 2 + (y-center) ** 2) <= radius:
+                mask[y][x] = True
+
     return mask
 
-mask = create_circular_mask(100, 100)
+mask = create_circular_mask(100)
 
 x_length = 100
 y_length = 100
@@ -128,27 +149,29 @@ for y in range(y_length):
 solution = wave_solver(grid, x_length, y_length, "circle", circle_list=circle_list)
 
 
-# for length in [25, 50, 75, 100, 125, 150, 175, 200]:
-#     grid = np.zeros((length, length), dtype=int)
+# Plot the eigenvalues for different grid sizes
+for length in [25, 50, 75, 100, 125, 150, 175]:
+    print(length)
+    grid = np.zeros((length, length), dtype=int)
 
-#     counter = 0
-#     for y in range(length):
-#         for x in range(length):
-#             grid[y][x] = int(counter)
-#             counter += 1
+    counter = 0
+    for y in range(length):
+        for x in range(length):
+            grid[y][x] = int(counter)
+            counter += 1
 
-#     print(grid)
+    freqs = wave_solver(grid, length, length, "square", freqs=True)
 
-#     freqs = wave_solver(grid, length, length, "square", freqs=True)
+    plt.scatter([length for i in range(len(freqs))], freqs)
+plt.xlabel("Box size")
+plt.ylabel("Eigenvalues")
+plt.show()
 
-#     plt.scatter([length for i in range(len(freqs))], freqs)
 
-# plt.show()
-
+# Animate the wave
 freq = abs((solution[0][5]))
 print(freq)
 vector = abs(solution[1][:,5])
-
 
 # for t in np.arange(0, 10, 0.1):
 #     u = vector * 100*(np.cos((freq)**0.5* t) + 0.1*np.sin(freq ** 0.5 * t))
