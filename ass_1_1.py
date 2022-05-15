@@ -1,6 +1,9 @@
 # Scientific computing exercise 1.1
 # Peter Voerman and Nik Brouw
 
+# Set the variable below to True in order to show the animations
+animate = False
+
 import numpy as np
 import matplotlib.pyplot as plt
 
@@ -40,7 +43,7 @@ def assignment_1_1(initial_pos):
         if counter in [0, 250, 500, 750, 1000]:
             plot_pos.append(string_pos)
 
-        if counter % 1 == 0:
+        if counter % 1 == 0 and animate:
             plt.plot(x_list, string_pos)
             plt.xlim(0, length)
             plt.ylim(-1, 1)

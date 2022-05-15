@@ -1,3 +1,6 @@
+# Nik Brouw and Peter Voerman
+# Scientific computing exercise set 3
+
 import numpy as np
 from scipy import linalg
 from scipy.sparse.linalg import eigs
@@ -16,18 +19,12 @@ def diffusion_solver(grid, x_length, y_length, filename, sparce=True, circle_lis
             element = grid[y][x]
             if y > 0:
                 matrix[grid[y-1][x]][element] = -1
-                matrix[element][element] -=1
             if y < y_length - 1 :
                 matrix[grid[y+1][x]][element] = -1
-                matrix[element][element] -=1
             if x > 0:
                 matrix[grid[y][x-1]][element] = -1
-                matrix[element][element] -=1
             if x < x_length - 1:
                 matrix[grid[y][x+1]][element] = -1
-                matrix[element][element] -=1
-
-            matrix[element][element] = 4
 
     for y in range(y_length):
         for x in range(x_length):
@@ -39,7 +36,7 @@ def diffusion_solver(grid, x_length, y_length, filename, sparce=True, circle_lis
 
     b = np.zeros(n_elements)
 
-    b[int(0.3*x_length*y_length + 0.6 * y_length)] = 10
+    b[int(0.3*y_length + 0.4 * y_length**2)] = 1
 
     solution = linalg.solve(matrix, b)
 
@@ -48,29 +45,33 @@ def diffusion_solver(grid, x_length, y_length, filename, sparce=True, circle_lis
     for y in range(y_length):
         for x in range(x_length):
             solution_grid[y][x] = (solution[y * x_length + x])
+    plt.xticks([0, x_length/4, x_length/2, x_length*.75,x_length-1], [0, 0.5, 1, 1.5, 2])
+    plt.yticks([0, x_length/4, x_length/2, x_length*.75,x_length-1], [2, 1.5, 1, 0.5,0])
+    plt.title("Diffusion on a circular disk")
     plt.imshow(solution_grid)
     plt.savefig(f"plots_3/diffusion/{filename}")
 
     return solution
 
 
-def create_circular_mask(h, w, center=None, radius=None):
+def create_circular_mask(diameter):
 
-    if center is None: # use the middle of the image
-        center = (int(w/2), int(h/2))
-    if radius is None: # use the smallest distance between the center and image walls
-        radius = min(center[0], center[1], w-center[0], h-center[1])
+    center = int(diameter/2)
+    radius = center
 
-    Y, X = np.ogrid[:h, :w]
-    dist_from_center = np.sqrt((X - center[0])**2 + (Y-center[1])**2)
+    mask = [[False for i in range(diameter)] for i in range(diameter)]
+    
+    for y in range(diameter):
+        for x in range(diameter):
+            if np.sqrt((x-center) ** 2 + (y-center) ** 2) <= radius:
+                mask[y][x] = True
 
-    mask = dist_from_center <= radius
     return mask
 
-mask = create_circular_mask(100, 100)
+mask = create_circular_mask(100)
 
-x_length = 50
-y_length = 50
+x_length = 100
+y_length = 100
 
 grid = np.zeros((y_length, x_length), dtype=int)
 

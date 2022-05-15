@@ -55,7 +55,7 @@ def SOR(omega, grid, cluster, return_counter=False):
 
     return grid
 
-def DLA(eta, cluster_size=250, omega=1, return_counter=False):
+def DLA(eta, cluster_size=250, omega=1.2, return_counter=False):
 
     grid = np.zeros((N,N))
 
@@ -105,6 +105,8 @@ def DLA(eta, cluster_size=250, omega=1, return_counter=False):
         new_point = np.random.choice(range(len(candidates)), p=probability_list)
         
         cluster.append(candidates[new_point])
+
+    print()
 
     if not return_counter:
         for y in range(N):

@@ -3,14 +3,14 @@
 
 # The results of one of the simulations are stored in "2.pkl", "2withnoise.pkl and "2fromcorner.pkl"
 # Change the variable below to True in order to run the entire simulation again
-
-run_again = False
+run_again = True
 
 # When running the simulation again, change the variable below to True in order to add noise to the system
-noise = False
+noise = True
 
-# Change the filename in order to save/view a different simulation
-filename = "2withnoise.pkl"
+# Change the filename in order to save/view a different simulation 
+# (2.pkl for the normal simulation, 2withnoise.pkl for the simulation with noise)
+filename = "2longnoise.pkl"
 
 import numpy as np
 import matplotlib.pyplot as plt
@@ -18,7 +18,7 @@ import pickle
 import random
 
 N = 100
-t_end = 5000
+t_end = 20000
 
 Du = 0.16
 Dv = 0.08
@@ -117,7 +117,7 @@ else:
     u_grid_list, v_grid_list = calculate_diffusion()
 
 
-times = [0, 10, 100, 500, 1000, 2500, 4999]
+times = [0, 10, 100, 500, 1000, 2500, 4999, 10000, 15000, 19999]
 
 
 plt.rcParams.update({'font.size': 25})
@@ -164,11 +164,11 @@ for time in times:
     plt.title(f"Concentration of V, t={time}")
     plt.savefig(f"plots_2/{filename}v{time}.png")
 
-# counter = 0
-# for grid in v_grid_list:
-#     if counter % 25 == 0:
-#         plt.imshow(grid)
-#         plt.draw()
-#         plt.pause(0.001)
-#         plt.clf()
-#     counter += 1
+counter = 0
+for grid in v_grid_list:
+    if counter % 25 == 0:
+        plt.imshow(grid)
+        plt.draw()
+        plt.pause(0.001)
+        plt.clf()
+    counter += 1
